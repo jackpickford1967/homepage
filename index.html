@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Homepage Map with Pins</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        /* Default map size for desktop */
+        #map {
+            width: 100%;
+            height: 400px;
+        }
+
+        /* Adjust map size for mobile devices */
+        @media (max-width: 768px) {
+            #map {
+                width: 100%;
+                height: 350px;
+            }
+        }
+
+        /* Adjust map size for small mobile devices */
+        @media (max-width: 480px) {
+            #map {
+                width: 100%;
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        var zoomLevel = window.innerWidth <= 768 ? 9 : 9.5; // Different zoom level for mobile devices
+        var map = L.map('map').setView([51.7961, -0.2088], zoomLevel); // Initial center coordinates
+
+        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamFjazE5NjciLCJhIjoiY2x4b3BsYnM4MDRlZTJtcXdlbWFrMmcwYSJ9.OIw1KRIBeDSIOhn5wr5JoQ', {
+            maxZoom: 18,
+            id: 'mapbox/streets-v11', // Choose a Mapbox style
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: 'pk.eyJ1IjoiamFjazE5NjciLCJhIjoiY2x4b3BsYnM4MDRlZTJtcXdlbWFrMmcwYSJ9.OIw1KRIBeDSIOhn5wr5JoQ'
+        }).addTo(map);
+
+        fetch('https://raw.githubusercontent.com/jackpickford1967/homepage_map/main/homepage_pins.geojson')
+            .then(response => response.json())
+            .then(data => {
+                var geoJsonLayer = L.geoJSON(data).addTo(map);
+                map.fitBounds(geoJsonLayer.getBounds()); // Center map to the polygon with pin drops
+            });
+    </script>
+</body>
+</html>
